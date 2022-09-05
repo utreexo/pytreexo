@@ -143,7 +143,7 @@ def calculate_roots(numleaves: int, dels: [bytes], proof: Proof) -> [bytes]:
         pos = proof.targets.pop(0) if index == 0 else next_positions.pop(0)
         cur_hash = dels.pop(0) if index == 0 else next_hashes.pop(0)
 
-        if pos > row_maxpos(row, total_rows):
+        while pos > row_maxpos(row, total_rows):
             row += 1
 
         if isroot(pos, numleaves, row, total_rows):
