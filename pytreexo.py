@@ -1,5 +1,4 @@
 import copy
-import math
 import hashlib
 
 
@@ -82,12 +81,8 @@ def parent(pos: int, total_rows: int) -> int:
     return (pos >> 1) | (1 << total_rows)
 
 
-def next_power_of_2(x: int) -> int:
-    return 1 if x == 0 else 2**(x - 1).bit_length()
-
-
 def tree_rows(n: int) -> int:
-    return int(math.log2(next_power_of_2(n)))
+    return 0 if n == 0 else (n - 1).bit_length()
 
 
 def row_maxpos(row: int, total_row: int) -> int:
