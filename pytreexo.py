@@ -39,9 +39,7 @@ class Stump:
                 if root is None:
                     continue
                 else:
-                    m = hashlib.new('sha512_256')
-                    m.update(root+newroot)
-                    newroot = m.digest()
+                    newroot = parent_hash(root, newroot)
                 row += 1
 
             self.roots.append(newroot)
@@ -74,6 +72,10 @@ class Stump:
 
         for i, idx in enumerate(root_idxs):
             self.roots[idx] = modified_roots[i]
+
+
+def parent_hash(left, right):
+    return hashlib.new('sha512_256', left+right).digest()
 
 
 def parent(pos: int, total_rows: int) -> int:
@@ -165,22 +167,16 @@ def calculate_roots(numleaves: int, dels: [bytes], proof: Proof) -> [bytes]:
             elif sib_hash is None:
                 next_hash = cur_hash
             else:
-                m = hashlib.new('sha512_256')
-                m.update(cur_hash+sib_hash)
-                next_hash = m.digest()
+                next_hash = parent_hash(cur_hash, sib_hash)
         else:
             proofhash = proof.proof.pop(0)
 
             next_hash = proofhash
             if cur_hash is not None:
                 if pos & 1 == 0:
-                    m = hashlib.new('sha512_256')
-                    m.update(cur_hash+proofhash)
-                    next_hash = m.digest()
+                    next_hash = parent_hash(cur_hash, proofhash)
                 else:
-                    m = hashlib.new('sha512_256')
-                    m.update(proofhash+cur_hash)
-                    next_hash = m.digest()
+                    next_hash = parent_hash(proofhash, cur_hash)
 
         next_hashes.append(next_hash)
         next_positions.append(parent(pos, total_rows))
