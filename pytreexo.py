@@ -74,6 +74,8 @@ class Stump:
 
 
 def parent_hash(left, right):
+    if left is None: return right
+    if right is None: return left
     return hashlib.new('sha512_256', left+right).digest()
 
 
@@ -157,21 +159,14 @@ def calculate_roots(numleaves: int, dels: [bytes], proof: Proof) -> [bytes]:
 
         next_hash = bytes
         if sib_present:
-            if cur_hash is None:
-                next_hash = sib_hash
-            elif sib_hash is None:
-                next_hash = cur_hash
-            else:
-                next_hash = parent_hash(cur_hash, sib_hash)
+            next_hash = parent_hash(cur_hash, sib_hash)
         else:
             proofhash = proof.proof.pop(0)
 
-            next_hash = proofhash
-            if cur_hash is not None:
-                if pos & 1 == 0:
-                    next_hash = parent_hash(cur_hash, proofhash)
-                else:
-                    next_hash = parent_hash(proofhash, cur_hash)
+            if pos & 1 == 0:
+                next_hash = parent_hash(cur_hash, proofhash)
+            else:
+                next_hash = parent_hash(proofhash, cur_hash)
 
         next_hashes.append(next_hash)
         next_positions.append(parent(pos, total_rows))
