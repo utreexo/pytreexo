@@ -84,11 +84,6 @@ def tree_rows(n: int) -> int:
     return 0 if n == 0 else (n - 1).bit_length()
 
 
-def row_maxpos(row: int, total_row: int) -> int:
-    mask = (2 << total_row) - 1
-    return ((mask << int(total_row-row)) & mask) - 1
-
-
 def root_position(leaves: int, row: int, total_rows: int) -> int:
     mask = (2 << total_rows) - 1
     before = leaves & (mask << (row + 1))
@@ -111,20 +106,6 @@ def isroot(position: int, numleaves: int, total_rows: int) -> bool:
     rootpos = root_position(numleaves, row, total_rows)
     root_present = numleaves & (1 << row) != 0
     return root_present and rootpos == position
-
-
-def next_least_list(list0, list1):
-    if list0 and list1:
-        if list0[0] < list1[0]:
-            return 0
-        else:
-            return 1
-    elif list0 and not list1:
-        return 0
-    elif not list0 and list1:
-        return 1
-    else:
-        return None
 
 
 def calculate_roots(numleaves: int, dels: [bytes], proof: Proof) -> [bytes]:
