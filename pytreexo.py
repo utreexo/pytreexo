@@ -31,17 +31,13 @@ class Stump:
 
     def add(self, adds: [bytes]):
         for add in adds:
-            newroot = add
-            row = 0
-            while (self.numleaves >> row) & 1 == 1:
+            for row in range(tree_rows(self.numleaves)+1):
+                if (self.numleaves >> row) & 1 == 0:
+                    break
                 root = self.roots.pop()
-                if root is None:
-                    continue
-                else:
-                    newroot = parent_hash(root, newroot)
-                row += 1
+                add = parent_hash(root, add)
 
-            self.roots.append(newroot)
+            self.roots.append(add)
             self.numleaves += 1
 
     def verify(self, dels: [bytes], proof: Proof) -> [int]:
