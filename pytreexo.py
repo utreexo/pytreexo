@@ -41,33 +41,49 @@ class Stump:
             self.roots.append(add)
             self.numleaves += 1
 
-    def verify(self, dels: [bytes], proof: Proof) -> [int]:
+    def verify(self, dels: [bytes], proof: Proof):
         if len(dels) != len(proof.targets):
             raise("len of dels and proof.targets differ")
 
         root_candidates = calculate_roots(self.numleaves, dels, proof)
+        root_idxs = getrootidxs(self.numleaves, proof.targets)
 
-        root_idxs = []
-        for i in range(len(self.roots)):
-            j = len(self.roots) - (i+1)
-            if len(root_candidates) > len(root_idxs):
-                if self.roots[j] == root_candidates[len(root_idxs)]:
-                    root_idxs.append(j)
+        if len(root_candidates) != len(root_idxs):
+            raise("length of calculated roots from the proof and expected root count differ")
+
+        for i, idx in enumerate(root_idxs):
+            if self.roots[idx] != root_candidates[i]:
+                raise("calculated roots from the proof and matched roots differ")
 
         if len(root_idxs) != len(root_candidates):
             raise("calculated roots from the proof and matched roots differ")
 
-        return root_idxs
-
     def delete(self, dels: [bytes], proof: Proof):
-        dels_copy = dels.copy()
-        proof_copy = copy.copy(proof)
-        root_idxs = self.verify(dels_copy, proof_copy)
-
         modified_roots = calculate_roots(self.numleaves, None, proof)
-
+        root_idxs = getrootidxs(self.numleaves, proof.targets)
         for i, idx in enumerate(root_idxs):
             self.roots[idx] = modified_roots[i]
+
+
+def getrootidxs(numleaves: int, positions: [int]) -> [int]:
+    indexes = set()
+    for pos in positions:
+        idx = root_idx(numleaves, pos)
+        indexes.add(idx) if idx is not None else None
+
+    return sorted(list(indexes), reverse=True)
+
+
+def root_idx(numleaves: int, position: int) -> int:
+    idx = 0
+    for row in range(tree_rows(numleaves), -1, -1):
+        if numleaves&(1<<row) == 0:
+            continue
+        pos = position
+        for _ in range(row): pos = parent(pos, tree_rows(numleaves))
+        if isroot(pos, numleaves, tree_rows(numleaves)):
+            return idx
+        idx += 1
 
 
 def parent_hash(left, right):
