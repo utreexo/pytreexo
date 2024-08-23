@@ -57,7 +57,7 @@ class TestStump(unittest.TestCase):
 
                 proofhashes = [bytes.fromhex(proof_str) for proof_str in test['proofhashes']]
                 proof = pytreexo.Proof(test['target_values'], proofhashes)
-                s.delete(del_hashes, proof)
+                s.delete(proof)
 
                 for i, expected_str in enumerate(test['expected_roots']):
                     root = s.roots[i]
