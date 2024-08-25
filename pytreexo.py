@@ -33,7 +33,7 @@ class Stump:
     def add(self, adds: [bytes]):
         for add in adds:
             for row in range(tree_rows(self.numleaves)+1):
-                if (self.numleaves >> row) & 1 == 0:
+                if not root_present(self.numleaves, row):
                     break
                 root = self.roots.pop()
                 add = parent_hash(root, add)
@@ -77,7 +77,7 @@ def getrootidxs(numleaves: int, positions: [int]) -> [int]:
 def root_idx(numleaves: int, position: int) -> int:
     idx = 0
     for row in range(tree_rows(numleaves), -1, -1):
-        if numleaves&(1<<row) == 0:
+        if not root_present(numleaves, row):
             continue
         pos = position
         for _ in range(row): pos = parent(pos, tree_rows(numleaves))
@@ -117,11 +117,14 @@ def detect_row(position: int, total_rows: int) -> int:
     return h
 
 
+def root_present(numleaves: int, row: int) -> bool:
+    return numleaves & (1 << row) != 0
+
+
 def isroot(position: int, numleaves: int, total_rows: int) -> bool:
     row = detect_row(position, total_rows)
     rootpos = root_position(numleaves, row, total_rows)
-    root_present = numleaves & (1 << row) != 0
-    return root_present and rootpos == position
+    return root_present(numleaves, row) and rootpos == position
 
 
 def calculate_roots(numleaves: int, dels: [bytes], proof: Proof) -> [bytes]:
