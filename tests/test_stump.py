@@ -13,7 +13,8 @@ class TestStump(unittest.TestCase):
                 hashed_leaves = [hashlib.sha256(leaf).digest() for leaf in leaves]
 
                 s = pytreexo.Stump()
-                s.add(hashed_leaves)
+                for hashed_leaf in hashed_leaves:
+                    s.add(hashed_leaf)
 
                 for i, expected_str in enumerate(test['expected_roots']):
                     expected = bytes.fromhex(expected_str)
@@ -50,7 +51,8 @@ class TestStump(unittest.TestCase):
                 hashed_leaves = [hashlib.sha256(leaf).digest() for leaf in leaves]
 
                 s = pytreexo.Stump()
-                s.add(hashed_leaves)
+                for hashed_leaf in hashed_leaves:
+                    s.add(hashed_leaf)
 
                 preimages = [preimage.to_bytes(1, byteorder='big') for preimage in test['target_values']]
                 del_hashes = [hashlib.sha256(preimage).digest() for preimage in preimages]
