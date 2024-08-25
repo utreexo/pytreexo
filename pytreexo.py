@@ -127,43 +127,40 @@ def isroot(position: int, numleaves: int, total_rows: int) -> bool:
     return root_present(numleaves, row) and rootpos == position
 
 
+def is_left_sibling(position: int) -> bool:
+    return position & 1 == 0
+
+
+def right_sibling(position: int) -> int:
+    return position | 1
+
+
 def calculate_roots(numleaves: int, dels: [bytes], proof: Proof) -> [bytes]:
-    if not proof.targets:
-        return []
+    if not proof.targets: return []
+
+    position_hashes = {}
+    for i, target in enumerate(proof.targets):
+        position_hashes[target] = None if dels is None else dels[i]
 
     calculated_roots = []
-
-    posHash = {}
-    for i, target in enumerate(proof.targets):
-        if dels is None:
-            posHash[target] = None
-        else:
-            posHash[target] = dels[i]
-
     sortedTargets = sorted(proof.targets)
     while sortedTargets:
         pos = sortedTargets.pop(0)
-        cur_hash = posHash[pos]
-        del posHash[pos]
+        cur_hash = position_hashes.pop(pos)
 
         if isroot(pos, numleaves, tree_rows(numleaves)):
             calculated_roots.append(cur_hash)
             continue
 
-        parent_pos = parent(pos, tree_rows(numleaves))
-        bisect.insort(sortedTargets, parent_pos)
-
-        if sortedTargets and pos | 1 == sortedTargets[0]:
+        parent_pos, p_hash = parent(pos, tree_rows(numleaves)), bytes
+        if sortedTargets and right_sibling(pos) == sortedTargets[0]:
             sib_pos = sortedTargets.pop(0)
-            posHash[parent_pos] = parent_hash(cur_hash, posHash[sib_pos])
-
-            del posHash[sib_pos]
+            p_hash = parent_hash(cur_hash, position_hashes.pop(sib_pos))
         else:
             proofhash = proof.proof.pop(0)
+            p_hash = parent_hash(cur_hash, proofhash) if is_left_sibling(pos) else parent_hash(proofhash, cur_hash)
 
-            if pos & 1 == 0:
-                posHash[parent_pos] = parent_hash(cur_hash, proofhash)
-            else:
-                posHash[parent_pos] = parent_hash(proofhash, cur_hash)
+        position_hashes[parent_pos] = p_hash
+        bisect.insort(sortedTargets, parent_pos)
 
     return calculated_roots
