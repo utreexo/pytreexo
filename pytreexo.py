@@ -30,16 +30,14 @@ class Stump:
     def __eq__(self, other):
         return self.roots == other.roots and self.numleaves == other.numleaves
 
-    def add(self, adds: [bytes]):
-        for add in adds:
-            for row in range(tree_rows(self.numleaves)+1):
-                if not root_present(self.numleaves, row):
-                    break
-                root = self.roots.pop()
-                add = parent_hash(root, add)
+    def add(self, add: bytes):
+        for row in range(tree_rows(self.numleaves)+1):
+            if not root_present(self.numleaves, row): break
+            root = self.roots.pop()
+            add = parent_hash(root, add)
 
-            self.roots.append(add)
-            self.numleaves += 1
+        self.roots.append(add)
+        self.numleaves += 1
 
     def verify(self, dels: [bytes], proof: Proof):
         if len(dels) != len(proof.targets):
