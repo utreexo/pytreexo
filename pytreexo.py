@@ -70,15 +70,33 @@ def getrootidxs(numleaves: int, positions: [int]) -> [int]:
 
 
 def root_idx(numleaves: int, position: int) -> int:
-    idx = 0
+    cur_idx = 0
     for row in range(tree_rows(numleaves), -1, -1):
-        if not root_present(numleaves, row):
-            continue
-        pos = position
-        for _ in range(row): pos = parent(pos, tree_rows(numleaves))
-        if isroot(pos, numleaves, tree_rows(numleaves)):
-            return idx
-        idx += 1
+        if not root_present(numleaves, row): continue
+
+        for r in range(row, -1, -1):
+            start_pos = start_position_at_row(r, tree_rows(numleaves))
+            start_pos += start_position_offset(cur_idx, r, numleaves)
+            end_pos = start_pos+(1<<(row-r))
+            if start_pos <= position and position < end_pos: return cur_idx
+
+        cur_idx += 1
+
+
+def start_position_at_row(row: int, total_rows: int):
+    return (2<<total_rows) - (2 << (total_rows - row))
+
+
+def start_position_offset(index: int, row: int, numleaves: int):
+    offset = 0
+    for i in range(index):
+        offset += 2<<i
+
+    m = tree_rows(numleaves) - (index+1)
+    for _ in range(m-row):
+        offset *= 2
+
+    return offset
 
 
 def parent_hash(left, right):
