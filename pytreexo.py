@@ -53,9 +53,6 @@ class Stump:
             if self.roots[idx] != root_candidates[i]:
                 raise("calculated roots from the proof and matched roots differ")
 
-        if len(root_idxs) != len(root_candidates):
-            raise("calculated roots from the proof and matched roots differ")
-
     def delete(self, proof: Proof):
         modified_roots = calculate_roots(self.numleaves, None, proof)
         root_idxs = getrootidxs(self.numleaves, proof.targets)
