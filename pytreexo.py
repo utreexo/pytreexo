@@ -98,9 +98,9 @@ def tree_rows(n: int) -> int:
     return 0 if n == 0 else (n - 1).bit_length()
 
 
-def root_position(leaves: int, row: int, total_rows: int) -> int:
+def root_position(numleaves: int, row: int, total_rows: int) -> int:
     mask = (2 << total_rows) - 1
-    before = leaves & (mask << (row + 1))
+    before = numleaves & (mask << (row + 1))
     shifted = (before >> row) | (mask << (total_rows + 1 - row))
     return shifted & mask
 
