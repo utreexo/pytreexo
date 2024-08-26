@@ -78,7 +78,7 @@ def root_idx(numleaves: int, position: int) -> int:
         if not root_present(numleaves, row):
             continue
         pos = position
-        for _ in range(row): pos = parent(pos, tree_rows(numleaves))
+        for _ in range(detect_row(position, tree_rows(numleaves)), row): pos = parent(pos, tree_rows(numleaves))
         if isroot(pos, numleaves, tree_rows(numleaves)):
             return idx
         idx += 1
