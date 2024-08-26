@@ -81,6 +81,17 @@
       "expected": true
     },
     {
+      "numleaves": 6,
+      "roots": [
+        "2b77298feac78ab51bc5079099a074c6d789bd350442f5079fcba2b3402694e5",
+        "9eec588c41d87b16b0ee226cb38da3864f9537632321d8be855a73d5616dcc73"
+      ],
+      "targets": [8],
+      "target_preimages": [1],
+      "proofhashes": ["9576f4ade6e9bc3a6458b506ce3e4e890df29cb14cb5d3d887672aef55647a2b"],
+      "expected": true
+    },
+    {
       "numleaves": 8,
       "roots": [
         "b151a956139bb821d4effa34ea95c17560e0135d1e4661fc23cedc3af49dac42"
