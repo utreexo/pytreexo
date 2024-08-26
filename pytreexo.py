@@ -125,8 +125,8 @@ def isroot(position: int, numleaves: int, total_rows: int) -> bool:
     return root_present(numleaves, row) and rootpos == position
 
 
-def is_left_sibling(position: int) -> bool:
-    return position & 1 == 0
+def is_right_sibling(position: int) -> bool:
+    return position & 1 == 1
 
 
 def right_sibling(position: int) -> int:
@@ -156,7 +156,7 @@ def calculate_roots(numleaves: int, dels: [bytes], proof: Proof) -> [bytes]:
             p_hash = parent_hash(cur_hash, position_hashes.pop(sib_pos))
         else:
             proofhash = proof.proof.pop(0)
-            p_hash = parent_hash(cur_hash, proofhash) if is_left_sibling(pos) else parent_hash(proofhash, cur_hash)
+            p_hash = parent_hash(proofhash, cur_hash) if is_right_sibling(pos) else parent_hash(cur_hash, proofhash)
 
         position_hashes[parent_pos] = p_hash
         bisect.insort(sortedTargets, parent_pos)
