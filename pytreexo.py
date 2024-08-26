@@ -135,6 +135,7 @@ def right_sibling(position: int) -> int:
 
 def calculate_roots(numleaves: int, dels: [bytes], proof: Proof) -> [bytes]:
     if not proof.targets: return []
+    if len(proof.targets) != len(dels): raise("len of dels and proof.targets differ")
 
     position_hashes = {}
     for i, target in enumerate(proof.targets):
